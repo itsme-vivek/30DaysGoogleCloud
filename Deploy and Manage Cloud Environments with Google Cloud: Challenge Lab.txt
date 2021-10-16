@@ -87,22 +87,10 @@ gcloud config set compute/zone us-east1-b
 gcloud source repos clone sample-app
 
 cd sample-app
-
-touch aB  #CHANGE THE NAME HERE IF THIS IS NOT WORKING
+touch a
 
 git config --global user.email "$(gcloud config get-value account)"
-
-git config --global user.name "Student1" #can change student1 name
-
-git commit -aB -m "change1" #IF YOU HAVE CHANGED ABOVE ALSO MAKE  
-					 CHANGES HERE. ALSO CHANGE “change1” if
-					 Required during 2nd or 3rd deployment
-
-git tag v1.0.2  #also change tags in 2nd or 3rd deployment attempt
-
+git config --global user.name "Student"
+git commit -a -m "change"
+git tag v1.0.1
 git push --tags
-
-TRY CHANGING TAG NAMES, commit etc... IT WILL WORK.
-
-GO TO SPINNAKER
-DEPLOY AGAIN
