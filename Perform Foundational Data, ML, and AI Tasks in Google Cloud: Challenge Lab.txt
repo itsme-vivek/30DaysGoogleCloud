@@ -1,6 +1,8 @@
-Task - 1 : Run a simple Dataflow job
+storage →  bucket
 
-bq mk lab
+bigquery →  select project →  create dataset →  name=lab
+
+open cloud shell
 
 gsutil cp gs://cloud-training/gsp323/lab.csv .
 
@@ -10,17 +12,94 @@ gsutil cp gs://cloud-training/gsp323/lab.schema .
 
 cat lab.schema
 
+copy the bigquery schema and store it somewhere
 
-Task - 2 : Run a simple Dataproc job
+go to bigquery
+go to dataset lab
+create table
+create table from = google cloud storage
+select file from GCS bucket = gs://cloud-training/gsp323/lab.csv
+table name = customers
+enable edit as text
+paste the bigquery schema that you copied earlier
+create
 
-This has to be done mannually.
+Go to dataproc
+clusters
+create cluster
+leave the default values and press create
+click on the cluster name
+go to vm instances
+open ssh with the same name as the cluster
 
-Task - 3 : Run a simple Dataprep job
+run command in ssh: 
+hdfs dfs -cp gs://cloud-training/gsp323/data.txt /data.txt
 
-This has to be done mannually
+Go to dataflow
+Go to jobs
+create job
 
-Task - 4 : AI
+job name = lab-transform
+region = us-central-1
+dataflow template = Text Files on Cloud Storage to BigQuery [BATCH]
+Javascript UDF path in CLoud Storage = gs://cloud-training/gsp323/lab.js
+JSON path = gs://cloud-training/gsp323/lab.schema
+JavaScript UDF name = transform
+BigQuery output table = YOUR_PROJECT:lab.customers
+Cloud Storage input path = gs://cloud-training/gsp323/lab.csv
+Temporary BigQuery directory = gs://YOUR_PROJECT/bigquery_temp
+Temporary location = gs://YOUR_PROJECT/temp
 
+RUN JOB
+
+HERE YOUR TASK 1 IS COMPLETED
+----------------------------------------------------------------------------------------------------------------------
+
+Go to dataproc
+jobs
+submit job
+region = us-central-1
+job type = spark
+Main class or jar = org.apache.spark.examples.SparkPageRank
+Arguments = /data.txt
+Jar files = file:///usr/lib/spark/examples/jars/spark-examples.jar
+SUBMIT
+
+HERE YOUR TASK 2 IS COMPLETED
+--------------------------------------------------------------------------------------------------------------------------
+
+Go to dataprep
+accept all the conditions and move ahead
+import data
+GCS
+cloud-training/gsp323/runs.csv  [in search box type this]
+runs.csv
+import and wrangle
+
+column 9
+right click →  filter rows →  on column values →  contains
+
+patterns to match = /(^0$|^0\.0$)/
+
+ADD
+
+column 2 rename = runid
+column 3 rename = userid
+column 4 rename = labid
+column 5 rename = lab_title
+column 6 rename = start
+column 7 rename = end
+column 8 rename = time
+column 9 rename = score
+column 10 rename = state
+
+RUN JOB
+again RUN JOB
+
+HERE YOUR TASK 3 IS COMPLETED
+---------------------------------------------------------------------------------------------------------------------------
+
+Go to cloud shell
 
 gcloud iam service-accounts create my-natlang-sa \
   --display-name "my natural language service account"
@@ -34,21 +113,15 @@ gcloud auth activate-service-account my-natlang-sa@${GOOGLE_CLOUD_PROJECT}.iam.g
 
 gcloud ml language analyze-entities --content="Old Norse texts portray Odin as one-eyed and long-bearded, frequently wielding a spear named Gungnir and wearing a cloak and a broad hat." > result.json
 
-gcloud auth login
-(Copy the token from the link provided)
+gcloud auth login 
 
+Copy the token from the link provided  
 
 gsutil cp result.json gs://YOUR_PROJECT-marking/task4-cnl.result
 
-
-->Create an API key and export as API_KEY variable
-
-export API_KEY={Replace with API KEY}
-
 nano request.json
 
-
-->Add this content
+########################################################
 
 {
   "config": {
@@ -59,15 +132,12 @@ nano request.json
       "uri":"gs://cloud-training/gsp323/task4.flac"
   }
 }
-
-
-
+####################################################################
 
 curl -s -X POST -H "Content-Type: application/json" --data-binary @request.json \
 "https://speech.googleapis.com/v1/speech:recognize?key=${API_KEY}" > result.json
 
 gsutil cp result.json gs://YOUR_PROJECT-marking/task4-gcs.result
-
 
 gcloud iam service-accounts create quickstart
 
@@ -77,12 +147,9 @@ gcloud auth activate-service-account --key-file key.json
 
 export ACCESS_TOKEN=$(gcloud auth print-access-token)
 
+nano request.json 
 
-nano request.json
-
-
-->Add this content:
-
+################################################################
 
 {
    "inputUri":"gs://spls/gsp154/video/chicago.mp4",
@@ -91,9 +158,7 @@ nano request.json
    ]
 }
 
-
-->Now add the following commands on the command line:
-
+#################################################################
 
 curl -s -H 'Content-Type: application/json' \
     -H "Authorization: Bearer $ACCESS_TOKEN" \
