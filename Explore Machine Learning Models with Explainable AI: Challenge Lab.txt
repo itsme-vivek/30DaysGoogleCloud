@@ -11,11 +11,6 @@ model.fit(train_data, train_labels, epochs=10, batch_size=2048, validation_split
 
 Train your second model on the limited dataset. Use limited_train_data for your data and limited_train_labels for your labels. Use the same input_size for the limited_model
 
-create the limited_model = Sequential()
-limited_model.add (your layers)
-limited_model.compile
-limited_model.fit
-
 
 limited_model = Sequential()
 limited_model.add(layers.Dense(200, input_shape=(input_size,), activation='relu'))
